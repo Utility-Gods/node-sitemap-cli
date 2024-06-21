@@ -1,0 +1,37 @@
+# Dependency directories
+node_modules/
+pnpm-lock.yaml
+yarn.lock
+yarn.error
+pnpm-debug.log
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# dotenv environment variables file
+.env
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Project specific
+sitemap.xml
+dist/
