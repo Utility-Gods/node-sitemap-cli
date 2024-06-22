@@ -1,6 +1,6 @@
 {
   "name": "node-sitemap-cli",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A node-html-parser based sitemap generator",
   "main": "dist/index.js",
   "type": "module",
@@ -19,7 +19,13 @@
     "type": "git",
     "url": "git+https://github.com/Utility-Gods/node-sitemap-cli.git"
   },
-  "keywords": ["sitemap-generator", "sitemap", "seo", "crawler", "node"],
+  "keywords": [
+    "sitemap-generator",
+    "sitemap",
+    "seo",
+    "crawler",
+    "node"
+  ],
   "author": "Siddharth (sid@utilitygods.com)",
   "license": "ISC",
   "bugs": {
