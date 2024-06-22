@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { generateSitemapAndRobots } from "./dist/index.js";
+const { generateSitemapAndRobots } = require("./dist/index.js");
 
 const defaultOptions = {
   baseUrl: "http://localhost:3000",
@@ -8,7 +8,7 @@ const defaultOptions = {
   maxDepth: 3,
 };
 
-export function run(args = process.argv.slice(2)) {
+function run(args = process.argv.slice(2)) {
   const options = {
     ...defaultOptions,
     ...Object.fromEntries(
@@ -34,5 +34,9 @@ export function run(args = process.argv.slice(2)) {
 }
 
 // Only run the function if this script is executed directly
+if (require.main === module) {
+  run();
+}
 
-run();
+// Export the run function for testing or external use
+module.exports = { run };
