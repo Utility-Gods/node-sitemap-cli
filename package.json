@@ -18,15 +18,9 @@
     "type": "git",
     "url": "git+https://github.com/Utility-Gods/node-sitemap-cli.git"
   },
-  "keywords": [
-    "sitemap-generator",
-    "sitemap",
-    "seo",
-    "crawler",
-    "node"
-  ],
+  "keywords": ["sitemap-generator", "sitemap", "seo", "crawler", "node"],
   "author": "Siddharth (sid@utilitygods.com)",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Utility-Gods/node-sitemap-cli/issues"
   },
