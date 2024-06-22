@@ -1,4 +1,4 @@
-# node-sitemap-generator
+# node-sitemap-cli
 
 A flexible sitemap generator for Node.js projects.
 
@@ -7,13 +7,13 @@ A flexible sitemap generator for Node.js projects.
 Install the package globally using npm:
 
 ```bash
-npm install -g node-sitemap-generator
+npm install -g node-sitemap-cli
 ```
 
 Or locally in your project:
 
 ```bash
-npm install node-sitemap-generator
+npm install node-sitemap-cli
 ```
 
 ## Usage

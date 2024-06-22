@@ -1,5 +1,5 @@
 {
-  "name": "node-sitemap-generator",
+  "name": "node-sitemap-cli",
   "version": "1.0.0",
   "description": "A node-html-parser based sitemap generator",
   "main": "dist/index.js",
@@ -16,15 +16,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Utility-Gods/node-sitemap-generator.git"
+    "url": "git+https://github.com/Utility-Gods/node-sitemap-cli.git"
   },
   "keywords": ["sitemap-generator", "sitemap", "seo", "crawler", "node"],
-  "author": "Siddharth (Utility Gods)",
+  "author": "Siddharth (sid@utilitygods.com)",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Utility-Gods/node-sitemap-generator/issues"
+    "url": "https://github.com/Utility-Gods/node-sitemap-cli/issues"
   },
-  "homepage": "https://github.com/Utility-Gods/node-sitemap-generator#readme",
+  "homepage": "https://github.com/Utility-Gods/node-sitemap-cli#readme",
   "dependencies": {
     "node-html-parser": "^6.1.5"
   },

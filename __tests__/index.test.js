@@ -64,7 +64,7 @@ afterAll((done) => {
   });
 });
 
-describe("node-sitemap-generator", () => {
+describe("node-sitemap-cli", () => {
   beforeEach(() => {
     console.log("Clearing test output directory...");
     if (fs.existsSync(OUT_DIR)) {
