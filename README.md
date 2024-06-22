@@ -1,20 +1,16 @@
 # node-sitemap-generator
 
-A lightweight, dependency-minimal Node.js library for generating XML sitemaps by crawling websites. It can be used as a standalone script, a module in your project, or as a Vite plugin.
-
-## Features
-
-- Crawls websites and generates XML sitemaps
-- Lightweight with minimal dependencies
-- Configurable crawl depth and output directory
-- Supports both http and https protocols
-- Extracts `lastmod` from meta tags when available
-- Calculates `priority` based on page depth
-- Can be used as a Vite plugin for automatic sitemap generation during build
+A flexible sitemap generator for Node.js projects.
 
 ## Installation
 
-Install the package using npm:
+Install the package globally using npm:
+
+```bash
+npm install -g node-sitemap-generator
+```
+
+Or locally in your project:
 
 ```bash
 npm install node-sitemap-generator
@@ -22,103 +18,71 @@ npm install node-sitemap-generator
 
 ## Usage
 
-### As a standalone script
+### Global Installation
 
-1. Create a file named `generateSitemap.js` with the following content:
-
-```javascript
-const { generateSitemapFile } = require("node-sitemap-generator");
-
-generateSitemapFile(
-  {
-    baseUrl: "https://example.com",
-    outDir: "public",
-    maxDepth: 5,
-  },
-  (err) => {
-    if (err) {
-      console.error("Error generating sitemap:", err);
-      process.exit(1);
-    }
-    console.log("Sitemap generation complete!");
-  },
-);
-```
-
-2. Run the script:
+If you've installed the package globally, you can generate a sitemap by running:
 
 ```bash
-node generateSitemap.js
+generate-sitemap
 ```
 
-### As a module in your project
+To customize options:
 
-```javascript
-const { generateSitemapFile } = require("node-sitemap-generator");
-
-generateSitemapFile(
-  {
-    baseUrl: "https://example.com",
-    outDir: "public",
-    maxDepth: 3,
-  },
-  (err) => {
-    if (err) {
-      console.error("Error generating sitemap:", err);
-    } else {
-      console.log("Sitemap generation complete!");
-    }
-  },
-);
+```bash
+generate-sitemap baseUrl=https://your-site.com outDir=./public maxDepth=5
 ```
 
-### As a Vite plugin
+### Local Installation
 
-To use node-sitemap-generator as a Vite plugin, add it to your `vite.config.js` file:
+If you've installed the package locally, you can add a script to your `package.json`:
 
-```javascript
-import { defineConfig } from "vite";
-import { vitePluginSitemap } from "node-sitemap-generator/vite-plugin";
-
-export default defineConfig({
-  plugins: [
-    // ... other plugins
-    vitePluginSitemap({
-      baseUrl: "https://example.com",
-      outDir: "dist",
-      maxDepth: 5,
-    }),
-  ],
-});
+```json
+{
+  "scripts": {
+    "generate-sitemap": "generate-sitemap"
+  }
+}
 ```
 
-This will automatically generate a sitemap.xml file in your output directory when you run the Vite build command.
+Then run:
+
+```bash
+npm run generate-sitemap
+```
+
+Or with custom options:
+
+```bash
+npm run generate-sitemap -- baseUrl=https://your-site.com outDir=./public maxDepth=5
+```
 
 ## Configuration Options
 
 - `baseUrl` (string): The starting URL for crawling. Default: 'http://localhost:3000'
-- `outDir` (string): The directory where the sitemap will be saved. Default: 'dist'
-- `maxDepth` (number): The maximum depth to crawl. Default: 5
+- `outDir` (string): The directory where the sitemap will be saved. Default: './public'
+- `maxDepth` (number): The maximum depth to crawl. Default: 3
 
-## Environment Variables
+## Important Notes
 
-You can also configure the generator using environment variables:
+1. Ensure your Node.js version is 14.x or later.
 
-- `BASE_URL`: Sets the base URL to crawl
-- `OUT_DIR`: Sets the output directory
-- `MAX_DEPTH`: Sets the maximum crawl depth
+2. The sitemap generator crawls your site, so make sure your `baseUrl` is accessible when generating the sitemap.
 
-Example:
+3. If you're generating a sitemap for a development environment:
 
-```bash
-BASE_URL=https://example.com OUT_DIR=public MAX_DEPTH=3 node generateSitemap.js
-```
+   - Start your local development server first.
+   - Use the appropriate localhost URL and port as the `baseUrl`.
+   - Example: `generate-sitemap baseUrl=http://localhost:3000`
+
+4. For production sitemap generation, ensure you're using your live website URL as the `baseUrl`.
+
+5. Generation may take some time for larger sites.
 
 ## Limitations
 
-- Does not execute JavaScript, so dynamically generated content may be missed
-- Does not respect `robots.txt` rules
-- Does not handle rate limiting, use with caution on large sites
+- The generator cannot crawl pages that require authentication.
+- JavaScript-rendered content may not be included in the sitemap.
+- Very large sites may require additional optimization or breaking the sitemap into multiple files.
 
 ## Contributing
 

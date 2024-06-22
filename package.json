@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A node-html-parser based sitemap generator",
   "main": "dist/index.js",
+  "bin": {
+    "generate-sitemap": "./cli.js"
+  },
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",

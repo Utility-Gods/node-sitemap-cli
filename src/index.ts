@@ -45,6 +45,7 @@ async function crawlSite(baseUrl, maxDepth = 5) {
     if (visited.has(url) || depth > maxDepth) continue;
 
     try {
+      console.log(`Crawling: ${url}`);
       const html = await fetchPage(url);
       const root = parse(html);
       const lastMod =
@@ -83,7 +84,6 @@ async function crawlSite(baseUrl, maxDepth = 5) {
 function generateSitemap(urlMap) {
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
   xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-
   for (const [url, { lastmod, priority }] of urlMap) {
     xml += "  <url>\n";
     xml += `    <loc>${escapeXml(url)}</loc>\n`;
@@ -91,30 +91,48 @@ function generateSitemap(urlMap) {
     xml += `    <priority>${escapeXml(priority)}</priority>\n`;
     xml += "  </url>\n";
   }
-
   xml += "</urlset>";
   return xml;
 }
 
-export default function solidStartSitemap(options = {}) {
+function generateRobotsTxt(options) {
+  const { baseUrl, disallowPaths = [] } = options;
+  let content = "User-agent: *\n";
+  disallowPaths.forEach((path) => {
+    content += `Disallow: ${path}\n`;
+  });
+  content += `\nSitemap: ${new URL("sitemap.xml", baseUrl).href}\n`;
+  return content;
+}
+
+async function generateSitemapAndRobots(options) {
   const {
     baseUrl = "http://localhost:3000",
-    outDir = "dist",
+    outDir = "public",
     maxDepth = 5,
+    disallowPaths = [],
   } = options;
 
-  return {
-    name: "vite-plugin-solidstart-sitemap",
-    enforce: "post",
-    async closeBundle() {
-      console.log("Crawling site to generate sitemap...");
-      const urlMap = await crawlSite(baseUrl, maxDepth);
-      const sitemap = generateSitemap(urlMap);
+  console.log("Crawling site to generate sitemap...");
+  const urlMap = await crawlSite(baseUrl, maxDepth);
+  const sitemap = generateSitemap(urlMap);
+  const robotsTxt = generateRobotsTxt({ baseUrl, disallowPaths });
 
-      const outPath = path.resolve(process.cwd(), outDir, "sitemap.xml");
-      fs.writeFileSync(outPath, sitemap);
+  const sitemapPath = path.resolve(process.cwd(), outDir, "sitemap.xml");
+  const robotsPath = path.resolve(process.cwd(), outDir, "robots.txt");
 
-      console.log(`Sitemap generated at ${outPath}`);
-    },
-  };
+  fs.writeFileSync(sitemapPath, sitemap);
+  fs.writeFileSync(robotsPath, robotsTxt);
+
+  console.log(`Sitemap generated at ${sitemapPath}`);
+  console.log(`robots.txt generated at ${robotsPath}`);
 }
+
+generateSitemapAndRobots({
+  baseUrl: process.env.BASE_URL || "http://localhost:3000",
+  outDir: process.env.OUT_DIR || "public",
+  maxDepth: parseInt(process.env.MAX_DEPTH || "5", 10),
+  disallowPaths: (process.env.DISALLOW_PATHS || "").split(",").filter(Boolean),
+});
+
+export { generateSitemapAndRobots };
