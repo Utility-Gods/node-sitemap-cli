@@ -1,7 +1,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { generateSitemapAndRobots } = require("../dist/index");
+const { generateSitemapAndRobots } = require("../dist/index.js");
 
 const PORT = 6969;
 const BASE_URL = `http://localhost:${PORT}`;
