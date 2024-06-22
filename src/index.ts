@@ -2,10 +2,27 @@ import fs from "fs";
 import path from "path";
 import https from "https";
 import http from "http";
-import { parse } from "node-html-parser";
+import { parse, HTMLElement } from "node-html-parser";
 import { URL } from "url";
 
-function escapeXml(unsafe) {
+interface UrlInfo {
+  lastmod: string;
+  priority: string;
+}
+
+interface CrawlQueueItem {
+  url: string;
+  depth: number;
+}
+
+interface GenerateOptions {
+  baseUrl: string;
+  outDir: string;
+  maxDepth: number;
+  disallowPaths: string[];
+}
+
+function escapeXml(unsafe: string): string {
   return unsafe.replace(/[<>&'"]/g, function (c) {
     switch (c) {
       case "<":
@@ -18,11 +35,13 @@ function escapeXml(unsafe) {
         return "&apos;";
       case '"':
         return "&quot;";
+      default:
+        return c;
     }
   });
 }
 
-function fetchPage(url) {
+function fetchPage(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const client = url.startsWith("https") ? https : http;
     client
@@ -35,13 +54,18 @@ function fetchPage(url) {
   });
 }
 
-async function crawlSite(baseUrl, maxDepth = 5) {
-  const visited = new Map();
-  const queue = [{ url: baseUrl, depth: 0 }];
+async function crawlSite(
+  baseUrl: string,
+  maxDepth: number = 5
+): Promise<Map<string, UrlInfo>> {
+  const visited = new Map<string, UrlInfo>();
+  const queue: CrawlQueueItem[] = [{ url: baseUrl, depth: 0 }];
   const baseUrlObj = new URL(baseUrl);
 
   while (queue.length > 0) {
-    const { url, depth } = queue.shift();
+    const item = queue.shift();
+    if (!item) continue;
+    const { url, depth } = item;
     if (visited.has(url) || depth > maxDepth) continue;
 
     try {
@@ -59,14 +83,14 @@ async function crawlSite(baseUrl, maxDepth = 5) {
 
       const links = root
         .querySelectorAll("a")
-        .map((a) => {
+        .map((a: HTMLElement) => {
           try {
-            return new URL(a.getAttribute("href"), url).href;
+            return new URL(a.getAttribute("href") || "", url).href;
           } catch {
             return null;
           }
         })
-        .filter((href) => href && href.startsWith(baseUrl));
+        .filter((href): href is string => !!href && href.startsWith(baseUrl));
 
       for (const link of links) {
         if (!visited.has(link)) {
@@ -81,7 +105,7 @@ async function crawlSite(baseUrl, maxDepth = 5) {
   return visited;
 }
 
-function generateSitemap(urlMap) {
+function generateSitemap(urlMap: Map<string, UrlInfo>): string {
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
   xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
   for (const [url, { lastmod, priority }] of urlMap) {
@@ -95,7 +119,10 @@ function generateSitemap(urlMap) {
   return xml;
 }
 
-function generateRobotsTxt(options) {
+function generateRobotsTxt(options: {
+  baseUrl: string;
+  disallowPaths: string[];
+}): string {
   const { baseUrl, disallowPaths = [] } = options;
   let content = "User-agent: *\n";
   disallowPaths.forEach((path) => {
@@ -105,7 +132,9 @@ function generateRobotsTxt(options) {
   return content;
 }
 
-async function generateSitemapAndRobots(options) {
+async function generateSitemapAndRobots(
+  options: GenerateOptions
+): Promise<void> {
   const {
     baseUrl = "http://localhost:3000",
     outDir = "public",
@@ -128,11 +157,16 @@ async function generateSitemapAndRobots(options) {
   console.log(`robots.txt generated at ${robotsPath}`);
 }
 
-generateSitemapAndRobots({
-  baseUrl: process.env.BASE_URL || "http://localhost:3000",
-  outDir: process.env.OUT_DIR || "public",
-  maxDepth: parseInt(process.env.MAX_DEPTH || "5", 10),
-  disallowPaths: (process.env.DISALLOW_PATHS || "").split(",").filter(Boolean),
-});
+// Only run if this script is executed directly
+if (require.main === module) {
+  generateSitemapAndRobots({
+    baseUrl: process.env.BASE_URL || "http://localhost:3000",
+    outDir: process.env.OUT_DIR || "public",
+    maxDepth: parseInt(process.env.MAX_DEPTH || "5", 10),
+    disallowPaths: (process.env.DISALLOW_PATHS || "")
+      .split(",")
+      .filter(Boolean),
+  });
+}
 
 export { generateSitemapAndRobots };
