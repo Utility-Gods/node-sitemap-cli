@@ -18,18 +18,26 @@ This document outlines the process for setting up, building, testing, and publis
 
 ## Development Workflow
 
-1. Make your code changes in the `src` directory.
+1. Make your code changes in the JavaScript files.
 
-2. Run the TypeScript compiler to build the project:
-
-   ```bash
-   npm run build
-   ```
-
-3. Test your changes locally:
+2. Test your changes locally:
    ```bash
    npm test
    ```
+
+## CLI Usage
+
+The package includes a CLI tool. After installation, you can use it as follows:
+
+```bash
+npx sitemap-cli-gen baseUrl=https://example.com outDir=./public maxDepth=3
+```
+
+Or if installed globally:
+
+```bash
+sitemap-cli-gen baseUrl=https://example.com outDir=./public maxDepth=3
+```
 
 ## Testing
 
@@ -123,5 +131,6 @@ If you encounter a "permission denied" error when running the publish script:
 - Always ensure all tests pass before publishing.
 - Update the CHANGELOG.md file with any significant changes before publishing.
 - Make sure you're logged into npm (`npm login`) before attempting to publish.
+- The main CLI file is `cli.js`. Ensure this file has the correct permissions to be executed.
 
 For any questions or issues, please open an issue on the GitHub repository.
